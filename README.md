@@ -13,8 +13,8 @@ Also catch up the possibility of a draw.
 
 ## What I've leanred
 - I learned on how 'complex' even simple games
-can be if you want them to modell in code.
-- How to concept arrays when in a 3 x 3 raster.
+can be if you modell them in code.
+- How to concept arrays when there are in a 3 x 3 raster.
 - Handling with arrays, boolean and keys in a game matter.
 
 
