@@ -11,6 +11,7 @@
 #gameContainer{
     font-family: sans-serif;
     text-align: center;
+    align-items: center;
 }
 #cellContainer{
     display: grid;
