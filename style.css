@@ -12,6 +12,7 @@
     font-family: sans-serif;
     text-align: center;
     align-items: center;
+    justify-content: center;
 }
 #cellContainer{
     display: grid;
