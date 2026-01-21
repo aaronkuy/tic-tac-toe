@@ -18,4 +18,5 @@ can be if you modell them in code.
 - Handling with arrays, boolean and keys in a game matter.
 
 
-<img width="1468" height="828" alt="Screenshot 2026-01-21 at 01 24 25" src="https://github.com/user-attachments/assets/8611f40a-9ab0-43f3-ad15-7cbf54a4752a" />
+
+<img width="1464" height="826" alt="Screenshot 2026-01-21 at 02 17 19" src="https://github.com/user-attachments/assets/123d1012-d658-4a8c-9bd3-6022f6f7d3ae" />
