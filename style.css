@@ -11,12 +11,16 @@
 #gameContainer{
     font-family: sans-serif;
     text-align: center;
-    align-items: center;
-    justify-content: center;
+    
 }
 #cellContainer{
     display: grid;
     grid-template-columns: repeat(3, auto);
     width: 225px;
     margin: auto;
+}
+.gC{
+    align-items: center;
+    justify-content: center;
+    
 }
