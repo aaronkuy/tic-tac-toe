@@ -1,22 +1,43 @@
-# Tic Tac Toe App
+# Tic Tac Toe
 
-## Description
-Just a plain Java Script pendant to the classical game of Tic Tac Toe.
-Responsive application with restart button and a win text display. 
-Also catch up the possibility of a draw.
+The classic two-player game in the browser, with win and draw detection.
 
+![Screenshot of Tic Tac Toe](docs/screenshot.png)
 
-## Tech Stack
-- HTML
-- CSS
-- JS
+## Features
 
-## What I've leanred
-- I learned on how 'complex' even simple games
-can be if you modell them in code.
-- How to concept arrays when there are in a 3 x 3 raster.
-- Handling with arrays, boolean and keys in a game matter.
+- Two players take turns as X and O
+- Detects all eight winning lines and draws
+- Status line for whose turn it is, and a restart button
 
+## Tech
 
+- HTML, CSS, vanilla JavaScript
 
-<img width="1464" height="826" alt="Screenshot 2026-01-21 at 02 17 19" src="https://github.com/user-attachments/assets/123d1012-d658-4a8c-9bd3-6022f6f7d3ae" />
+## How to run
+
+Open the live version: **[aaronkuy.github.io/tic-tac-toe](https://aaronkuy.github.io/tic-tac-toe/)**
+
+Or run it locally. There is no build step and no dependency:
+
+```bash
+git clone https://github.com/aaronkuy/tic-tac-toe.git
+cd tic-tac-toe
+open index.html        # macOS; on Linux use xdg-open, on Windows start
+```
+
+## What I learned
+
+- Modelling a 3x3 board as a flat array
+- Checking win conditions against a list of index triples
+- Keeping game state (`running`, `currentPlayer`) consistent
+
+## What I'd do next
+
+- A computer opponent (minimax)
+- Score across rounds
+- Keyboard and screen-reader support for the board
+
+## License
+
+See [LICENSE](LICENSE).
