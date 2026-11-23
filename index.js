@@ -1,102 +1,107 @@
-//Fetch HTML elements
-const cells = document.querySelectorAll(".cell");
+// Page logic: reads clicks and keys, keeps the board array and the DOM in step.
+// The rules (getWinner, isDraw) come from game.js, which is loaded first.
+
+const boardElement = document.querySelector("#cellContainer");
+const cells = Array.from(boardElement.querySelectorAll(".cell"));
 const statusText = document.querySelector("#statusText");
 const restartBtn = document.querySelector("#restartBtn");
-//All possibilities to win tic tac toe
-const winConditions = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-];
-//Player with 'X' begins, running by default is false, 
-let options = ["", "", "", "", "", "", "", "", ""];
-let currentPlayer = "X";
-let running = false;
 
-initializeGame();
+// Row and column change for each arrow key.
+const ARROW_STEPS = {
+    ArrowUp: [-1, 0],
+    ArrowDown: [1, 0],
+    ArrowLeft: [0, -1],
+    ArrowRight: [0, 1]
+};
 
-function initializeGame() {
-    //Here we allocate the cells clicked by the user to 'cells'
-    cells.forEach(cell => cell.addEventListener("click", cellClicked));
-    //Await true statement from the user by clicking restart button
-    restartBtn.addEventListener("click", restartGame);
-    //'currentPlayer' can take the value 'X' or 'O', displays the current state
-    //which player has the next turn
-    statusText.textContent = `${currentPlayer}'s turn`;
-    //If the game has started, running has set the value true
+let board;
+let currentPlayer;
+let running;
+
+// One listener on the board instead of nine on the cells. Enter and Space
+// need no handler of their own: on a <button> the browser turns them into a click.
+boardElement.addEventListener("click", handleBoardClick);
+boardElement.addEventListener("keydown", handleBoardKeydown);
+restartBtn.addEventListener("click", startGame);
+
+startGame();
+
+// Used for the first round and for every restart; X always starts.
+function startGame() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    currentPlayer = "X";
     running = true;
+    cells.forEach((cell, index) => renderCell(index));
+    statusText.textContent = `${currentPlayer}'s turn`;
 }
 
-function cellClicked() {
-    //'this' automatically allocates the right 
-    const cellIndex = this.getAttribute("cellIndex");
-//Skip the code beneath when the game ends or didn't start
-    //and no field is left out
-    if (options[cellIndex] != "" || !running) {
+function handleBoardClick(event) {
+    const cell = event.target.closest(".cell");
+    if (cell === null) {
         return;
     }
-    updateCell(this, cellIndex);
-    checkWinner();
-}
+    const index = Number(cell.dataset.index);
 
-function updateCell(cell, index) {
-    //Set the 'X'/'O' value inside the array
-    options[index] = currentPlayer;
-    //Display it in HTML 
-    cell.textContent = currentPlayer;
-}
-
-function changePlayer() {
-    //Ternary method, if current player is 'X' make it 'O', if false
-    //then applies the false value which is 'X'
-    currentPlayer = (currentPlayer == "X") ? "O" : "X";
-    //Display the info within the DOM
-    statusText.textContent = `${currentPlayer}'s turn`;
-}
-
-function checkWinner() {
-    //By default roundWon is false
-    let roundWon = false;
-
-    for (let i = 0; i < winConditions.length; i++) {
-        const condition = winConditions[i];
-        const cellA = options[condition[0]];
-        const cellB = options[condition[1]];
-        const cellC = options[condition[2]];
-//If XOR even one cell is empty means ficuratively, that the game hasn't finished yet.
-        //make the next iteration. 
-        if (cellA == "" || cellB == "" || cellC == "") {
-            continue;
-        }
-        //only if all the fields has the value, e.g. cellA-C has the value 'X'
-        //set roundWon to true and stop there 
-        if (cellA == cellB && cellB == cellC) {
-            roundWon = true;
-            break;
-        }
+    // Occupied cells and the cells of a finished game are only marked with
+    // aria-disabled, so they still receive clicks. Reject the move here.
+    if (!running || board[index] !== "") {
+        return;
     }
-//If roundWon is true, adjust the winner text
-    if (roundWon) {
-        statusText.textContent = `${currentPlayer} wins!`;
-        //set to default, await the the next game
-        running = false;
-        //If roundWon is false, and we have to more options left
-        //this implicates a draw
-    } else if (!options.includes("")) {
-        //display 'Draw' within the DOM
-        statusText.textContent = `Draw!`;
-        //running false signals that the iteration is finished
-        running = false;
+
+    board[index] = currentPlayer;
+    renderCell(index);
+
+    const winner = getWinner(board);
+    if (winner !== null) {
+        endGame(`${winner} wins!`);
+    } else if (isDraw(board)) {
+        endGame("Draw!");
     } else {
-        changePlayer();
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusText.textContent = `${currentPlayer}'s turn`;
     }
 }
-//If the user presses the restart button, set all values in the DOM and log to default
-function restartGame() {
-    currentPlayer = "X";
-    options = ["", "", "", "", "", "", "", "", ""];
-    statusText.textContent = `${currentPlayer}'s turn`;
-    cells.forEach(cell => cell.textContent = "");
-    running = true;
+
+function endGame(message) {
+    running = false;
+    statusText.textContent = message;
+    // The cells that are still empty become aria-disabled as well.
+    cells.forEach((cell, index) => renderCell(index));
 }
 
+// Arrow keys move the focus inside the grid and stop at its edges.
+function handleBoardKeydown(event) {
+    const step = ARROW_STEPS[event.key];
+    const cell = event.target.closest(".cell");
+    if (step === undefined || cell === null) {
+        return;
+    }
+    // Arrow keys with a modifier belong to the browser (Alt/Cmd + Left is "back").
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+        return;
+    }
+    const index = Number(cell.dataset.index);
+    const row = Math.floor(index / 3) + step[0];
+    const column = (index % 3) + step[1];
+    if (row < 0 || row > 2 || column < 0 || column > 2) {
+        return;
+    }
+    // Otherwise the arrow key would also scroll the page.
+    event.preventDefault();
+    cells[row * 3 + column].focus();
+}
+
+function renderCell(index) {
+    const cell = cells[index];
+    const mark = board[index];
+    const row = Math.floor(index / 3) + 1;
+    const column = (index % 3) + 1;
+
+    cell.textContent = mark;
+    // aria-label replaces the text content for screen readers, so the label
+    // has to name the mark as well, or a played cell would still read "empty".
+    cell.setAttribute("aria-label", `Row ${row}, column ${column}, ${mark === "" ? "empty" : mark}`);
+    // aria-disabled instead of disabled: a disabled button drops out of the
+    // tab order, and the board could no longer be read with the keyboard.
+    cell.setAttribute("aria-disabled", String(mark !== "" || !running));
+}
