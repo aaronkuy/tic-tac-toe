@@ -76,6 +76,10 @@ function handleBoardKeydown(event) {
     if (step === undefined || cell === null) {
         return;
     }
+    // Arrow keys with a modifier belong to the browser (Alt/Cmd + Left is "back").
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+        return;
+    }
     const index = Number(cell.dataset.index);
     const row = Math.floor(index / 3) + step[0];
     const column = (index % 3) + step[1];
