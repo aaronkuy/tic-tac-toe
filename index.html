@@ -6,36 +6,33 @@
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
 
+<main id="gameContainer">
+    <h1>Tic Tac Toe</h1>
 
-<div id="gameContainer">
-  <h1> Tic Tac Toe</h1>
+    <!-- The labels are the state before the first move; index.js keeps them in step with the board. -->
+    <div id="cellContainer" role="group" aria-label="Game board">
+        <button type="button" class="cell" data-index="0" aria-label="Row 1, column 1, empty"></button>
+        <button type="button" class="cell" data-index="1" aria-label="Row 1, column 2, empty"></button>
+        <button type="button" class="cell" data-index="2" aria-label="Row 1, column 3, empty"></button>
+        <button type="button" class="cell" data-index="3" aria-label="Row 2, column 1, empty"></button>
+        <button type="button" class="cell" data-index="4" aria-label="Row 2, column 2, empty"></button>
+        <button type="button" class="cell" data-index="5" aria-label="Row 2, column 3, empty"></button>
+        <button type="button" class="cell" data-index="6" aria-label="Row 3, column 1, empty"></button>
+        <button type="button" class="cell" data-index="7" aria-label="Row 3, column 2, empty"></button>
+        <button type="button" class="cell" data-index="8" aria-label="Row 3, column 3, empty"></button>
+    </div>
 
-  <div id="cellContainer">
-    <div cellIndex="0" class="cell"></div>
-    <div cellIndex="1" class="cell"></div>
-    <div cellIndex="2" class="cell"></div>
-    <div cellIndex="3" class="cell"></div>
-    <div cellIndex="4" class="cell"></div>
-    <div cellIndex="5" class="cell"></div>
-    <div cellIndex="6" class="cell"></div>
-    <div cellIndex="7" class="cell"></div>
-    <div cellIndex="8" class="cell"></div>
-  </div>
-
-  <h2 id="statusText"></h2>
-  <button id="restartBtn">Restart</button>
-
-</div>
-
+    <p id="statusText" role="status"></p>
+    <button type="button" id="restartBtn">Restart</button>
+</main>
 
 <footer class="footer">
     Based on a <a href="https://www.youtube.com/watch?v=AnmwHjpEhtA">tutorial by Bro Code</a> · <a href="https://github.com/aaronkuy">Aaron Kuyucu</a> · <a href="https://github.com/aaronkuy/tic-tac-toe">Source on GitHub</a>
 </footer>
 
+<script src="game.js"></script>
 <script src="index.js"></script>
 
 </body>

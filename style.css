@@ -83,6 +83,7 @@ button {
     aspect-ratio: 1;
     display: grid;
     place-items: center;
+    padding: 0;
     background: #f6f7fb;
     border: 1px solid var(--line);
     border-radius: 14px;
@@ -94,12 +95,25 @@ button {
     transition: background 0.15s ease, transform 0.08s ease;
 }
 
-.cell:hover {
-    background: var(--accent-soft);
+/* Cells that cannot be played keep the focus but give no "clickable" feedback. */
+.cell[aria-disabled="true"] {
+    cursor: default;
 }
 
-.cell:active {
+/* Without the media query the hover colour sticks to a cell after a tap on touch screens. */
+@media (hover: hover) {
+    .cell[aria-disabled="false"]:hover {
+        background: var(--accent-soft);
+    }
+}
+
+.cell[aria-disabled="false"]:active {
     transform: scale(0.97);
+}
+
+.cell:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
 }
 
 #statusText {
