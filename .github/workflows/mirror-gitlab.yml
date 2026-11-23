@@ -1,0 +1,63 @@
+name: Mirror to GitLab
+
+# Pushes every branch and tag to https://gitlab.com/aaronkuyucu/tic-tac-toe.
+# GitLab Free has no pull mirroring, so GitHub pushes over SSH with a
+# project deploy key that has write access (secret GITLAB_MIRROR_KEY).
+# The hourly run also picks up branches that do not contain this file.
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["**"]
+  delete:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One mirror run at a time; a newer run waits instead of racing an older one.
+concurrency:
+  group: mirror-gitlab
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GITLAB_REMOTE: git@gitlab.com:aaronkuyucu/tic-tac-toe.git
+      # Published at https://docs.gitlab.com/user/gitlab_com/#ssh-host-keys-fingerprints
+      GITLAB_ED25519_FP: SHA256:eUXGGm1YGsMAS7vkcx6JOJdOGHPem5gQp4taiCfCLB8
+    steps:
+      - name: Set up SSH
+        env:
+          MIRROR_KEY: ${{ secrets.GITLAB_MIRROR_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$MIRROR_KEY" > ~/.ssh/gitlab_mirror
+          chmod 600 ~/.ssh/gitlab_mirror
+          # Trust the scanned host key only if it matches GitLab's published fingerprint.
+          ssh-keyscan -t ed25519 gitlab.com > ~/.ssh/known_hosts 2>/dev/null
+          ssh-keygen -lf ~/.ssh/known_hosts | grep -q "$GITLAB_ED25519_FP"
+
+      - name: Clone from GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" \
+            clone --mirror "https://github.com/${GITHUB_REPOSITORY}.git" repo.git
+          # Pull request refs are GitHub-only and GitLab rejects them.
+          git -C repo.git for-each-ref --format='delete %(refname)' refs/pull | git -C repo.git update-ref --stdin
+
+      - name: Push to GitLab
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/.ssh/gitlab_mirror -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes
+        run: |
+          git -C repo.git push --prune --force "$GITLAB_REMOTE" \
+            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+
+      - name: Remove key
+        if: always()
+        run: rm -f ~/.ssh/gitlab_mirror
