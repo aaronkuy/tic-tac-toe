@@ -2,7 +2,7 @@
 
 The classic two-player game in the browser, with win and draw detection.
 
-![Tic Tac Toe with a game in progress: two O in the top corners, X in the centre and bottom right](docs/screenshot.png)
+![Tic Tac Toe with a game in progress: two O in the top corners, X in the center and bottom right](docs/screenshot-2026-11.png)
 
 ## Features
 
@@ -31,7 +31,8 @@ open index.html        # macOS; on Linux use xdg-open, on Windows start
 
 ## Tests
 
-The rules are tested with Node's built-in test runner (Node.js 20 or newer), without any package to install:
+The rules are tested with Node's built-in test runner, without any package to install
+(run locally with Node.js 24 and in CI with the Node.js version on GitHub's Ubuntu runner):
 
 ```bash
 node --test
