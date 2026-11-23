@@ -26,18 +26,20 @@ cd tic-tac-toe
 open index.html        # macOS; on Linux use xdg-open, on Windows start
 ```
 
-## What I learned
-
-- Modelling a 3x3 board as a flat array
-- Checking win conditions against a list of index triples
-- Keeping game state (`running`, `currentPlayer`) consistent
-
 ## What I'd do next
 
 - A computer opponent (minimax)
 - Score across rounds
 - Keyboard and screen-reader support for the board
 
+## Credits
+
+This project started from Bro Code's tutorial
+[A game of TicTacToe written in JavaScript](https://www.youtube.com/watch?v=AnmwHjpEhtA):
+the game rules, the page structure and the first stylesheet come from there.
+The visual redesign from October 2026 was added in this repository.
+
 ## License
 
-See [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE). The license covers what was added in this repository;
+the tutorial code it builds on remains Bro Code's.
